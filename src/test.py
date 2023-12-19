@@ -3,6 +3,7 @@ from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, FallingEdge, Timer, ClockCycles
 
 
+"""
 segments = [ 63, 6, 91, 79, 102, 109, 125, 7, 127, 111 ]
 
 @cocotb.test()
@@ -45,4 +46,4 @@ async def test_7seg(dut):
         dut._log.info("check segment {}".format(i))
         await ClockCycles(dut.clk, max_count)
         assert int(dut.segments.value) == segments[i % 10]
-
+"""

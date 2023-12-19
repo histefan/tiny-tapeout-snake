@@ -1,6 +1,14 @@
 `timescale 1ns/1ns
 
 `include "snake.v"
+`include "vga_sync.v"
+`include "random_position.v"
+`include "draw_border.v"
+`include "draw_apple.v"
+`include "draw_snake.v"
+`include "snake_control.v"
+`include "collision.v"
+`include "rgb_select.v"
 
 module tb_snake;
     
@@ -44,8 +52,10 @@ module tb_snake;
     
     /* verilator lint_off STMTDLY */
     #60 reset = 1'b1;
-    #60 reset = 1'b0;
-    #50000000 $finish;
+    #600 reset = 1'b0;
+    #230000 left = 1'b1;
+    #44000 left = 1'b0;
+    #200000000 $finish;
     /* verilator lint_on STMTDLY */
     $fclose(fd);
 end

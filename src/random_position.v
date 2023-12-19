@@ -26,8 +26,8 @@ always @(posedge clk) begin
     if (reset) begin
         x <= {BIT{1'b0}};
         y <= {BIT{1'b0}};
-        saved_x <= 60; // start position always the same
-        saved_y <= 100;
+        saved_x <= 200; // start position always the same
+        saved_y <= 240;
         new_num <= 1'b0;
     end else begin
         x <= next_x;

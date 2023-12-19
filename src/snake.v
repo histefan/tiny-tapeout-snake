@@ -1,15 +1,3 @@
-/*
-`include "vga_sync.v"
-`include "random_position.v"
-`include "draw_border.v"
-`include "draw_apple.v"
-`include "draw_snake.v"
-`include "snake_control.v"
-`include "collision.v"
-`include "rgb_select.v"
-
-*/
-
 `default_nettype none
 
 module snake #(
@@ -26,6 +14,8 @@ module snake #(
     output reg v_sync_o 
 );
 
+
+//VGA Control Signal Creation
 wire h_sync, v_sync, active;
 wire [BIT-1:0] x_pos, y_pos;
 
@@ -73,6 +63,7 @@ begin
     h_sync_o <= h_sync;
 end
 
+// Border
 wire border_active;
 wire[2:0] rgb_border;
 
@@ -83,6 +74,7 @@ draw_border game_border (
     .rgb(rgb_border)
 );
 
+// apple
 wire rand_trigger;
 reg apple_trigger, next_apple_trigger;
 wire[BIT-1:0] apple_x, apple_y;
@@ -107,6 +99,7 @@ draw_apple game_apple (
     .rgb(rgb_apple) 
 );
 
+// controls 
 wire[2:0] snake_direction;
 
 snake_control game_control (
@@ -116,21 +109,27 @@ snake_control game_control (
     .down(down),
     .left(left),
     .right(right),
+    .game_state(state),
     .direction(snake_direction)
 );
 
+// snake
 wire snake_head_active, snake_body_active;
 wire [2:0] rgb_snake;
 
 draw_snake game_snake (
+    .clk(clk),
+    .reset(reset),
     .x_pos(x_pos),
     .y_pos(y_pos),
     .direction(snake_direction),
+    .game_state(state),
     .snake_head_active(snake_head_active),
     .snake_body_active(snake_body_active),
     .rgb(rgb_snake) 
 );
 
+// collision
 wire [1:0] collision_state;
 
 collision game_collision (
@@ -153,7 +152,7 @@ localparam GAME_OVER = 2'b11;
 localparam COLLISION = 2'b01;
 localparam APPLE_COLLECTED = 2'b10;
 
-reg[1:0] state, next_state;
+reg[1:0] state, next_state; // GAME STATE
 
 always @(posedge clk) begin
     if (reset) begin
@@ -174,7 +173,7 @@ always @(state, up, down, left, right, collision_state, apple_trigger) begin
     if (collision_state == COLLISION) begin
         next_state = GAME_OVER;
     end
-    if (collision_state == APPLE_COLLECTED) begin
+    if (collision_state == APPLE_COLLECTED) begin // generate new apple position
         next_apple_trigger = 1'b1;
     end else begin
         next_apple_trigger = 1'b0;
