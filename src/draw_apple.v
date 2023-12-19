@@ -10,7 +10,6 @@ module draw_apple # (
     output wire [2:0] rgb
 );
 
-
 parameter color = 3'b100; // red
 
 assign apple_active = (x_pos >= x_start) && (x_pos < x_start + SIZE - 1) && (y_pos >= y_start) && (y_pos < y_start + SIZE-1);

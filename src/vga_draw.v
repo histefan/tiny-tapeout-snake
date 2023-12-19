@@ -1,3 +1,8 @@
+`include "vga_sync.v"
+`include "random_position.v"
+`include "draw_border.v"
+`include "draw_apple.v"
+
 module vga_draw
 #(
     parameter BIT = 10, // ceil(maxPx=800) 
@@ -12,6 +17,7 @@ module vga_draw
 ) (
     input wire clk, // 25.179 MHz 
     input wire reset,
+    input wire trigger, // trigger new position of apple
     output wire red_o,
     output wire grn_o,
     output wire blu_o,
@@ -71,12 +77,21 @@ draw_border border (
 wire[2:0] apple_rgb;
 wire apple_r, apple_g, apple_b;
 wire apple_active;
+wire[BIT-1:0] apple_x, apple_y;
+
+random_position apple_pos(
+    .clk(clk),
+    .reset(reset),
+    .new_number(trigger),
+    .x_out(apple_x),
+    .y_out(apple_y)
+);
 
 draw_apple apple (
     .x_pos(x_pos),
     .y_pos(y_pos),
-    .x_start(10'd0),
-    .y_start(10'd0),
+    .x_start(apple_x),
+    .y_start(apple_y),
     .apple_active(apple_active),
     .rgb(apple_rgb)  
 );

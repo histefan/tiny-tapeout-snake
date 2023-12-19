@@ -6,6 +6,7 @@ module tb_vga_draw;
     
     reg reset = 1'b1;
     reg clk = 1'b0;
+    reg trigger = 1'b0;
     wire red_o;
     wire grn_o;
     wire blu_o;
@@ -15,6 +16,7 @@ module tb_vga_draw;
     vga_draw tb(
         .clk(clk),
         .reset(reset),
+        .trigger(trigger),
         .red_o(red_o),
         .grn_o(grn_o),
         .blu_o(blu_o),
@@ -35,11 +37,12 @@ module tb_vga_draw;
     end
     
     initial begin
-     $dumpfile ("tb_vga_draw.vcd");
-     $dumpvars ;
+    $dumpfile ("tb_vga_draw.vcd");
+    $dumpvars ;
     
     /* verilator lint_off STMTDLY */
     #40 reset = 1'b0;
+    #204200 trigger = 1'b1;
     #50000000 $finish;
     /* verilator lint_on STMTDLY */
     $fclose(fd);

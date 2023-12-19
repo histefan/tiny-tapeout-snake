@@ -41,7 +41,6 @@ always @(counter, btn, btn_in) begin: combinatorics
 end
 
 assign btn_out = btn;
-        
 
 endmodule
 
