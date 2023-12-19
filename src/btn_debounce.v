@@ -9,17 +9,6 @@ module btn_debounce (
     output wire btn_out
 );
 
-/*
-wire sync_btn;
-
-synchronizer btn_synchronizer (
-    .clk (clk),
-    .reset (reset),
-    .async_in (btn_in),
-    .sync_out (sync_btn)
-);
-*/
-
 parameter COUNTER_BIT = 18;
 parameter COUNTER_VAL = 5;
 
