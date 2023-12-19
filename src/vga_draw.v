@@ -1,7 +1,3 @@
-`include "vga_sync.v"
-`include "draw_border.v"
-`include "draw_apple.v"
-
 module vga_draw
 #(
     parameter BIT = 10, // ceil(maxPx=800) 
@@ -92,19 +88,19 @@ draw_apple apple (
 reg r,g,b;
   
   always @(border_r, border_g, border_b, apple_r, apple_g, apple_b, x_pos, y_pos, h_sync, v_sync) begin : color_comb
-      r = 1'b0;
-      g = 1'b0;
-      b = 1'b0;
+      r <= 1'b0;
+      g <= 1'b0;
+      b <= 1'b0;
       if (active) begin
         if (apple_active) begin
-           r = apple_r;
-           g = apple_g;
-           b = apple_b;
+           r <= apple_r;
+           g <= apple_g;
+           b <= apple_b;
         end
         if (border_active) begin
-           r = border_r;
-           g = border_g;
-           b = border_b; 
+           r <= border_r;
+           g <= border_g;
+           b <= border_b; 
        end 
      end
   end
