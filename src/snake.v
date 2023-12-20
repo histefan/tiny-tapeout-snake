@@ -3,7 +3,7 @@
 module snake #(
     parameter BIT = 10
 ) (
-    input wire clk,
+    input wire clk, // 25.179 MHz
     input wire reset,
     input wire up,
     input wire down,
@@ -14,8 +14,67 @@ module snake #(
     output reg v_sync_o 
 );
 
+/*##### input synchronization and btn debounce #####*/
+wire sync_up, sync_down, sync_left, sync_right, debounce_up, debounce_down, debounce_left, debounce_right;
 
-//VGA Control Signal Creation
+synchronizer up_sync (
+    .clk(clk),
+    .reset(reset),
+    .async_in(up),
+    .sync_out(sync_up)
+);
+
+btn_debounce up_debounce (
+    .clk(clk),
+    .reset(reset),
+    .btn_in(sync_up),
+    .btn_out(debounce_up)
+);
+
+synchronizer down_sync (
+    .clk(clk),
+    .reset(reset),
+    .async_in(down),
+    .sync_out(sync_down)
+);
+
+btn_debounce down_debounce (
+    .clk(clk),
+    .reset(reset),
+    .btn_in(sync_down),
+    .btn_out(debounce_down)
+);
+
+synchronizer left_sync (
+    .clk(clk),
+    .reset(reset),
+    .async_in(left),
+    .sync_out(sync_left)
+);
+
+btn_debounce left_debounce (
+    .clk(clk),
+    .reset(reset),
+    .btn_in(sync_left),
+    .btn_out(debounce_left)
+);
+
+synchronizer right_sync (
+    .clk(clk),
+    .reset(reset),
+    .async_in(down),
+    .sync_out(sync_right)
+);
+
+btn_debounce right_debounce (
+    .clk(clk),
+    .reset(reset),
+    .btn_in(sync_right),
+    .btn_out(debounce_right)
+);
+
+
+//### VGA Control Signal Creation ###
 wire h_sync, v_sync, active;
 wire [BIT-1:0] x_pos, y_pos;
 
@@ -63,7 +122,7 @@ begin
     h_sync_o <= h_sync;
 end
 
-// Border
+//### Border drawing ###
 wire border_active;
 wire[2:0] rgb_border;
 
@@ -74,7 +133,7 @@ draw_border game_border (
     .rgb(rgb_border)
 );
 
-// apple
+// ### apple position and drawing ###
 wire rand_trigger;
 reg apple_trigger, next_apple_trigger;
 wire[BIT-1:0] apple_x, apple_y;
@@ -99,27 +158,38 @@ draw_apple game_apple (
     .rgb(rgb_apple) 
 );
 
-// controls 
+// ### controls ###
 wire[2:0] snake_direction;
 
 snake_control game_control (
     .clk(clk),
     .reset(reset),
-    .up(up),
-    .down(down),
-    .left(left),
-    .right(right),
+    .up(debounce_up),
+    .down(debounce_down),
+    .left(debounce_left),
+    .right(debounce_right),
     .game_state(state),
     .direction(snake_direction)
 );
 
-// snake
+
+wire update_snake;
+
+snake_update_trigger snake_update_trigger (
+    .clk(clk),
+    .reset(reset),
+    .x_pos(x_pos),
+    .y_pos(y_pos),
+    .update_trigger(update_snake)
+);
+// ### snake drawing and collision logic ###
 wire snake_head_active, snake_body_active;
 wire [2:0] rgb_snake;
 
 draw_snake game_snake (
     .clk(clk),
     .reset(reset),
+    .update(update_snake),
     .x_pos(x_pos),
     .y_pos(y_pos),
     .direction(snake_direction),
@@ -143,12 +213,12 @@ collision game_collision (
 );
 
 
-//state machine
+// ### state machine ###
 localparam IDLE = 2'b00;
 localparam PLAY = 2'b01;
 localparam GAME_OVER = 2'b11;
 
-// collision trigger signal
+// collision trigger states
 localparam COLLISION = 2'b01;
 localparam APPLE_COLLECTED = 2'b10;
 

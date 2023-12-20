@@ -9,6 +9,9 @@
 `include "snake_control.v"
 `include "collision.v"
 `include "rgb_select.v"
+`include "btn_debounce.v"
+`include "synchronizer.v"
+`include "snake_update_trigger.v"
 
 module tb_snake;
     
@@ -53,9 +56,10 @@ module tb_snake;
     /* verilator lint_off STMTDLY */
     #60 reset = 1'b1;
     #600 reset = 1'b0;
-    #230000 left = 1'b1;
-    #44000 left = 1'b0;
-    #200000000 $finish;
+    #23000 left = 1'b1;
+    #20000000 left = 1'b0;
+    #20000000 up = 1'b1;
+    #30000000 $finish;
     /* verilator lint_on STMTDLY */
     $fclose(fd);
 end

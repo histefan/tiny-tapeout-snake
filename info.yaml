@@ -17,6 +17,7 @@ project:
     - rgb_select.v
     - snake_control.v
     - random_position.v
+    - snake_update_trigger.v
     - snake.v
   top_module:  "tt_um_histefan_top"      # Put the name of your top module here, must start with "tt_um_". Make it unique by including your github username
 

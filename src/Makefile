@@ -9,7 +9,7 @@ TOPLEVEL_LANG ?= verilog
 ifneq ($(GATES),yes)
 
 # this is the only part you should need to modify:
-VERILOG_SOURCES += $(PWD)/tb.v $(PWD)/tt_um_histefan_top.v $(PWD)/vga_sync.v $(PWD)/synchronizer.v $(PWD)/btn_debounce.v $(PWD)/draw_border.v $(PWD)/draw_apple.v $(PWD)/draw_snake.v $(PWD)/collision.v $(PWD)/rgb_select.v $(PWD)/snake_control.v $(PWD)/random_position.v $(PWD)/snake.v
+VERILOG_SOURCES += $(PWD)/tb.v $(PWD)/tt_um_histefan_top.v $(PWD)/vga_sync.v $(PWD)/synchronizer.v $(PWD)/btn_debounce.v $(PWD)/draw_border.v $(PWD)/draw_apple.v $(PWD)/draw_snake.v $(PWD)/collision.v $(PWD)/rgb_select.v $(PWD)/snake_control.v $(PWD)/random_position.v $(PWD)/snake.v $(PWD)/snake_update_trigger.v
 
 else
 

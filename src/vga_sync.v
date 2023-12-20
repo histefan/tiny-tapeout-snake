@@ -51,8 +51,8 @@ always @(hsync_cnt, vsync_cnt) begin: combinatorics
     end
 end
 
-assign h_sync = (hsync_cnt < HRES + H_FRONT_PORCH || hsync_cnt > H_TOTAL - H_BACK_PORCH) ? 1'b1 : 1'b0;
-assign v_sync = (vsync_cnt < VRES + V_FRONT_PORCH || vsync_cnt > V_TOTAL - V_BACK_PORCH) ? 1'b1 : 1'b0;
+assign h_sync = ((hsync_cnt < HRES + H_FRONT_PORCH || hsync_cnt > H_TOTAL - H_BACK_PORCH) ? 1'b1 : 1'b0); 
+assign v_sync = ((vsync_cnt < VRES + V_FRONT_PORCH || vsync_cnt > V_TOTAL - V_BACK_PORCH) ? 1'b1 : 1'b0); 
 assign x_pos = hsync_cnt;
 assign y_pos = vsync_cnt;
 assign active = (hsync_cnt < HRES && vsync_cnt < VRES) ? 1'b1 : 1'b0;
