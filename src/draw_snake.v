@@ -1,5 +1,5 @@
 module draw_snake #(
-    parameter SIZE = 10,
+    parameter SIZE = 5,
     parameter BIT = 10,
     parameter X_START = 320, // start position of snake
     parameter Y_START = 240
@@ -28,155 +28,88 @@ localparam RIGHT = 3'b100;
 
 //states game
 localparam PLAY = 2'b01;
-//localparam GAME_OVER = 2'b11;
-
+localparam GAME_OVER = 2'b11;
+/*
 integer count1, count2, count3;
 reg [BIT-1:0] snakeX[0:31];
 reg [BIT-1:0] snakeY[0:31];
 reg [BIT-1:0] next_snakeX[0:31];
 reg [BIT-1:0] next_snakeY[0:31];
+*/
 reg[4:0] size, next_size;
-reg head, next_head, body, next_body;
+//reg head, next_head, body, next_body;
+//integer i;
 integer i;
-
-//reg [BIT-1:0] snakeX, next_snakeX, snakeY, next_snakeY, body1, body2, body3, body4, body5, body6, body7, body8, body9, body10, body11, body12
-
+reg [BIT-1:0] snakeX, next_snakeX, snakeY, next_snakeY; // , bodyX1, bodyX2, next_bodyX1, next_bodyX2;//, bodyX3, bodyX4, bodyX5, bodyX6, bodyX7, bodyX8, bodyX9, bodyX10, bodyX11, bodyX12, bodyX13, bodyX14, bodyX15;
+reg [BIT-1:0] bodyX [0:31];
+reg [BIT-1:0] bodyY [0:31];
+reg [BIT-1:0] next_bodyX [0:31];
+reg [BIT-1:0] next_bodyY [0:31];  //, next_bodyX1, next_bodyX2;
 always @(posedge clk) begin
     if (reset) begin
-       for(count3 = 1; count3 > 32; count3 = count3 + 1) begin
-           //initialse body of snake outside visible area on screen
-           snakeX[count3] <= 700;
-           snakeY[count3] <= 500;
-        end
         size <= 5'b00001;
-        snakeX[0] <= X_START;
-        snakeY[0] <= Y_START; 
-        head <= ((x_pos >= snakeX[0] && x_pos < snakeX[0] + SIZE) && (y_pos >= snakeY[0] && y_pos < snakeY[0] + SIZE));  
-        body <= 1'b0;   
+        snakeX <= X_START;
+        snakeY <= Y_START;
+         for (i = 0; i < 32; i = i+1) begin
+            bodyX[i] <= 700;
+            bodyY[i] <= 500;   
+        end        
     end else begin
-        for (i = 0; i < 32; i = i + 1) begin     
-            snakeX[i] <= next_snakeX[i];
-            snakeY[i] <= next_snakeY[i];
+        snakeX <= next_snakeX;
+        snakeY <= next_snakeY;
+        for (i = 0; i < 32; i = i+1) begin
+            bodyX[i] <= next_bodyX[i];
+            bodyY[i] <= next_bodyY[i];   
         end
         size <= next_size;
-        head <= next_head;
-        body <= next_body;
     end
 end
-    
-always @(snakeX[0], snakeY[0], size, game_state, direction, update, head, body, x_pos, y_pos) begin
 
-   for (i = 0; i < 32; i = i + 1) begin     
-        next_snakeX[i] = snakeX[i];
-        next_snakeY[i] = snakeY[i];
+always @(snakeX, snakeY, size, game_state, direction, update, bodyX[0], bodyY[0]) begin
+    next_snakeX = snakeX;
+    next_snakeY = snakeY;
+    for (i = 0; i < 32; i = i+1) begin
+            next_bodyX[i] = bodyX[i];
+            next_bodyY[i] = bodyY[i];   
     end
+    
     next_size = size;
-    next_head = head;
-    next_body = body;
-
     if (game_state == PLAY && update) begin
-        if (direction != IDLE) begin
             // shift values in register
-            for (count1 = 31; count1 > 0; count1 = count1 - 1) begin
-                if (count1 <= size-1) begin
-                    next_snakeX[count1] = snakeX[count1 - 1];
-                    next_snakeY[count1] = snakeX[count1 - 1];
-                end
-            end 
-                case (direction) // direction of head
-            UP: next_snakeY[0] = (snakeY[0] - SIZE);
-            DOWN: next_snakeY[0] = (snakeY[0] + SIZE);
-            LEFT : next_snakeX[0] = (snakeX[0] - SIZE);
-            RIGHT: next_snakeX[0] = (snakeX[0] + SIZE);
+            case (direction) // direction of head
+            UP: next_snakeY = (snakeY - SIZE);
+            DOWN: next_snakeY = (snakeY + SIZE);
+            LEFT : next_snakeX = (snakeX - SIZE);
+            RIGHT: next_snakeX = (snakeX + SIZE);
             IDLE: begin 
-                    next_snakeY[0] = snakeY[0];
-                    next_snakeX[0] = snakeX[0];
+                    next_snakeY = snakeY;
+                    next_snakeX = snakeX;
                   end
-            default: begin 
-                    next_snakeY[0] = snakeY[0];
-                    next_snakeX[0] = snakeX[0];
+            default:begin 
+                    next_snakeY = snakeY;
+                    next_snakeX = snakeX;
                   end
-        endcase
+        endcase 
+        for (i = 1; i < 32; i = i+1) begin
+            next_bodyX[i] = bodyX[i-1];
+            next_bodyY[i] = bodyY[i-1];   
         end
+        next_bodyX[0] = snakeX;
+        next_bodyY[0] = snakeY;
         
-        case (direction) // direction of head
-            UP: next_snakeY[0] = (snakeY[0] - SIZE);
-            DOWN: next_snakeY[0] = (snakeY[0] + SIZE);
-            LEFT : next_snakeX[0] = (snakeX[0] - SIZE);
-            RIGHT: next_snakeX[0] = (snakeX[0] + SIZE);
-            IDLE: begin 
-                    next_snakeY[0] = snakeY[0];
-                    next_snakeX[0] = snakeX[0];
-                  end
-            default: begin 
-                    next_snakeY[0] = snakeY[0];
-                    next_snakeX[0] = snakeX[0];
-                  end
-        endcase
-        next_head = ((x_pos >= snakeX[0] && x_pos < snakeX[0] + SIZE) && (y_pos >= snakeY[0] && y_pos < snakeY[0] + SIZE));    
-        
-    end else begin
-        for(count3 = 1; count3 > 32; count3 = count3 + 1) begin
-            //initialise body of snake outside visible area on screen
-            next_snakeX[count3] = 700;
-            next_snakeY[count3] = 500;
-        end
+    end     
+    if (game_state == GAME_OVER)  begin  
         //initialise snake head
         next_size = 5'b00010;
-        next_snakeX[0] = X_START;
-        next_snakeY[0] = Y_START;    
-    end
-
-        //next_head = ((x_pos >= snakeX[0] && x_pos < snakeX[0] + SIZE) && (y_pos >= snakeY[0] && y_pos < snakeY[0] + SIZE));
-
-
-    next_body = 1'b0; 
-    for (count2 = 1; count2 < size; count2 = count2 +1) begin
-        if (body == 1'b0) begin
-            next_body = ((x_pos > snakeX[count2] && x_pos < snakeX[count2] + SIZE) && (y_pos > snakeY[count2] && y_pos < snakeY[count2] + SIZE));
-        end
-    end
-    
+        next_snakeX = X_START;
+        next_snakeY = Y_START;    
+    end    
 end
 
-//assign snake_head_active = (x_pos >= x_start) && (x_pos < x_start + SIZE) && (y_pos >= y_start) && (y_pos < y_start + SIZE);
-//assign snake_body_active_left = (x_pos >= x_start + SIZE) && (x_pos < x_start + SIZE + SPEED) && (y_pos >= y_start) && (y_pos < y_start + SIZE) && direction == LEFT;
-
-//assign snake_body_active_up =  (x_pos >= x_start) && (x_pos < x_start + SIZE) && (y_pos >= y_start + SIZE) && (y_pos < y_start + SIZE + SPEED) && direction == UP;
-assign snake_head_active = ((x_pos >= snakeX[0] && x_pos < snakeX[0] + SIZE) && (y_pos >= snakeY[0] && y_pos < snakeY[0] + SIZE));
-assign snake_body_active = body;
+assign snake_head_active = (x_pos >= snakeX) && (x_pos < snakeX + SIZE) && (y_pos >= snakeY) && (y_pos < snakeY + SIZE);
+//assign snake_head_active = (x_pos >= snakeX) && (x_pos < snakeX + SIZE) && (y_pos >= snakeY) && (y_pos < snakeY + SIZE);
+assign snake_body_active = (x_pos >= bodyX[0]) && (x_pos < bodyX[0] + SIZE) && (y_pos >= bodyY[0]) && (y_pos < bodyY[0] + SIZE) || (x_pos >= bodyX[1]) && (x_pos < bodyX[1] + SIZE) && (y_pos >= bodyY[1]) && (y_pos < bodyY[1] + SIZE);
 assign rgb = snake_rgb;
-
-/*
-always @(posedge clk) begin
-    if (reset) begin
-        snake_body <= 1'b0;
-    end else begin
-        snake_body <= 0;
-        for (count2 = 1; count2 < size; count2 = count2 +1) begin
-            if (snake_body == 1'b0) begin
-            snake_body <= ((x_pos > snakeX[count2] && x_pos < snakeX[count2] + SIZE) && (y_pos > snakeY[count2] && y_pos < snakeY[count2] +SIZE));
-            end
-        end
-    end
-end
-
-reg snake_head;
-
-always @(posedge clk) begin
- if (reset) begin
-        snake_head <= 1'b0;
-    end else begin
-        snake_head <= ((x_pos > snakeX[0] && x_pos < snakeX[0] + SIZE) && (y_pos > snakeY[0] && y_pos < snakeY[0] +SIZE));
-    end
-end 
-*/
-
-
-
-
-
-
 
 
 /*

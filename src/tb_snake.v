@@ -59,7 +59,7 @@ module tb_snake;
     #23000 left = 1'b1;
     #20000000 left = 1'b0;
     #20000000 up = 1'b1;
-    #30000000 $finish;
+    #28000000 $finish;
     /* verilator lint_on STMTDLY */
     $fclose(fd);
 end
