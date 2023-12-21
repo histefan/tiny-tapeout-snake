@@ -9,8 +9,8 @@ module btn_debounce (
     output wire btn_out
 );
 
-parameter COUNTER_BIT = 18;
-parameter COUNTER_VAL = 5;
+parameter COUNTER_BIT = 16;
+parameter COUNTER_VAL = 50000; // 20 ms at about 25 MHz clk
 
 reg [COUNTER_BIT-1:0] counter, next_counter;
 reg btn, next_btn;

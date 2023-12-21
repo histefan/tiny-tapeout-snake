@@ -31,6 +31,7 @@ always @(posedge clk) begin
 end
 
 always @(state, up, down, left, right, game_state) begin
+    next_state = state;
     // snake cant run into its own body by changing direction
     if (up && state != DOWN) begin
         next_state = UP;

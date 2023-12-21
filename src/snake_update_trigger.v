@@ -2,7 +2,7 @@ module snake_update_trigger #(
     parameter BIT = 10,
     parameter V_SYNC_COUNT = 490,
     parameter H_SYNC_COUNT = 656,
-    parameter COUNTER = 1 // trigger update when this value is reached
+    parameter COUNTER = 2 // trigger update when this value is reached, update at about 60/COUNTER Hz
 ) (
     input wire clk,
     input wire reset,

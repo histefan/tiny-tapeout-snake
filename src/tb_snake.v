@@ -59,7 +59,11 @@ module tb_snake;
     #23000 left = 1'b1;
     #20000000 left = 1'b0;
     #20000000 up = 1'b1;
-    #50000000 $finish;
+    #20000 up = 1'b0;
+    #20000000 right = 1'b1;
+    #20000 right = 1'b0;
+    #20000000 down = 1'b1;
+    #80000000 $finish;
     /* verilator lint_on STMTDLY */
     $fclose(fd);
 end

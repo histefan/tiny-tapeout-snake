@@ -13,12 +13,13 @@ module tt_um_histefan_top (
 
     wire reset = ! rst_n;    
 
+/*
     // use bidirectionals as outputs
     assign uio_oe = 8'b11111111;
     assign uio_out = 8'b00000000;
     
     assign uo_out[2:0] = 3'b000;
-
+*/
     
     
 snake snake_game (

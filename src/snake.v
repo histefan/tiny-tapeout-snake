@@ -62,7 +62,7 @@ btn_debounce left_debounce (
 synchronizer right_sync (
     .clk(clk),
     .reset(reset),
-    .async_in(down),
+    .async_in(right),
     .sync_out(sync_right)
 );
 
