@@ -30,7 +30,7 @@ localparam RIGHT = 3'b100;
 localparam PLAY = 2'b01;
 localparam GAME_OVER = 2'b11;
 
-integer i,j;
+integer i,j,k,l,m;
 reg [BIT-1:0] snakeX, next_snakeX, snakeY, next_snakeY; 
 reg [BIT-1:0] bodyX [0:31];
 reg [BIT-1:0] bodyY [0:31];
@@ -49,9 +49,9 @@ always @(posedge clk) begin
     end else begin
         snakeX <= next_snakeX;
         snakeY <= next_snakeY;
-        for (i = 0; i < 32; i = i+1) begin
-            bodyX[i] <= next_bodyX[i];
-            bodyY[i] <= next_bodyY[i];   
+        for (k = 0; k < 32; k = k+1) begin
+            bodyX[k] <= next_bodyX[k];
+            bodyY[k] <= next_bodyY[k];   
         end
         //size <= next_size;
     end
@@ -60,9 +60,9 @@ end
 always @(snakeX, snakeY, game_state, direction, update, bodyX[0], bodyY[0]) begin
     next_snakeX = snakeX;
     next_snakeY = snakeY;
-    for (i = 0; i < 32; i = i+1) begin
-            next_bodyX[i] = bodyX[i];
-            next_bodyY[i] = bodyY[i];   
+    for (l = 0; l < 32; l = l+1) begin
+            next_bodyX[l] = bodyX[l];
+            next_bodyY[l] = bodyY[l];   
     end
     
     //next_size = size;
@@ -94,7 +94,12 @@ always @(snakeX, snakeY, game_state, direction, update, bodyX[0], bodyY[0]) begi
         //initialise snake head
         //next_size = 5'b00010;
         next_snakeX = X_START;
-        next_snakeY = Y_START;    
+        next_snakeY = Y_START;
+        for (m = 0; m < 32; m = m+1) begin
+            next_bodyX[m] = 10'd700;
+            next_bodyY[m] = 10'd500;   
+        end   
+          
     end    
 end
 

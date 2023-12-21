@@ -1,6 +1,6 @@
 module draw_apple # (
     parameter BIT = 10,
-    parameter SIZE = 10 // size of apple in px
+    parameter SIZE = 20 // size of apple in px
 ) (
     input wire[BIT-1:0] x_pos,
     input wire[BIT-1:0] y_pos,
