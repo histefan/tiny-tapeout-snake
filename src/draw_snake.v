@@ -109,14 +109,14 @@ assign snake_head_active = (x_pos >= snakeX) && (x_pos < snakeX + SIZE) && (y_po
 
 //temporary
 assign snake_body_active = (x_pos >= bodyX[0]) && (x_pos < bodyX[0] + SIZE) && (y_pos >= bodyY[0]) && (y_pos < bodyY[0] + SIZE) ||
-(x_pos >= bodyX[1]) && (x_pos < bodyX[1] + SIZE) && (y_pos >= bodyY[1]) && (y_pos < bodyY[1] + SIZE) ||
+(x_pos >= bodyX[1]) && (x_pos < bodyX[1] + SIZE) && (y_pos >= bodyY[1]) && (y_pos < bodyY[1] + SIZE); /* ||
 (x_pos >= bodyX[2]) && (x_pos < bodyX[2] + SIZE) && (y_pos >= bodyY[2]) && (y_pos < bodyY[2] + SIZE) ||
 (x_pos >= bodyX[3]) && (x_pos < bodyX[3] + SIZE) && (y_pos >= bodyY[3]) && (y_pos < bodyY[3] + SIZE) ||
 (x_pos >= bodyX[4]) && (x_pos < bodyX[4] + SIZE) && (y_pos >= bodyY[4]) && (y_pos < bodyY[4] + SIZE) ||
 (x_pos >= bodyX[5]) && (x_pos < bodyX[5] + SIZE) && (y_pos >= bodyY[5]) && (y_pos < bodyY[5] + SIZE) ||
 (x_pos >= bodyX[6]) && (x_pos < bodyX[6] + SIZE) && (y_pos >= bodyY[6]) && (y_pos < bodyY[6] + SIZE) ||
 (x_pos >= bodyX[7]) && (x_pos < bodyX[7] + SIZE) && (y_pos >= bodyY[7]) && (y_pos < bodyY[7] + SIZE);
-
+*/
 
 assign rgb = snake_rgb;
 
