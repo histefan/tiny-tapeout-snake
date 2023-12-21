@@ -193,6 +193,7 @@ draw_snake game_snake (
     .x_pos(x_pos),
     .y_pos(y_pos),
     .direction(snake_direction),
+    .collision(collision_state),
     .game_state(state),
     .snake_head_active(snake_head_active),
     .snake_body_active(snake_body_active),
