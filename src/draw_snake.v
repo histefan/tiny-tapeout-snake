@@ -26,21 +26,22 @@ localparam UP = 3'b001;
 localparam DOWN = 3'b010;
 localparam LEFT = 3'b011;
 localparam RIGHT = 3'b100;
+
 localparam APPLE_COLLECTED = 2'b10;
 
 //states game
 localparam PLAY = 2'b01;
 localparam GAME_OVER = 2'b11;
 
-integer i,j,k,l,m;
+integer i,j,k,l,m,n;
 reg [BIT-1:0] snakeX, next_snakeX, snakeY, next_snakeY; 
 reg [BIT-1:0] bodyX [0:7];
 reg [BIT-1:0] bodyY [0:7];
 reg [BIT-1:0] next_bodyX [0:7];
 reg [BIT-1:0] next_bodyY [0:7];  //, next_bodyX1, next_bodyX2;
-
+reg body_active, next_body_active;
 reg [7:0] body_size, next_body_size;
-
+reg head_active, next_head_active;
 reg apple, next_apple;
 
 always @(posedge clk) begin
@@ -52,8 +53,10 @@ always @(posedge clk) begin
             bodyX[i] <= 10'd700;
             bodyY[i] <= 10'd500;   
         end    
+        body_active <= 1'b0; 
+        head_active <= 1'b0;
         body_size <= 8'b00000100;
-        apple <= 1'b0;  
+        apple <= 1'b0;
     end else begin
         snakeX <= next_snakeX;
         snakeY <= next_snakeY;
@@ -61,16 +64,20 @@ always @(posedge clk) begin
             bodyX[k] <= next_bodyX[k];
             bodyY[k] <= next_bodyY[k];   
         end
+        body_active <= next_body_active;
         body_size <= next_body_size;
+        head_active <= next_head_active;
         apple <= next_apple;
        
         //size <= next_size;
     end
 end
 
-always @(snakeX, snakeY, game_state, direction, update, bodyX[0], bodyY[0], x_pos, y_pos, body_size, collision, apple) begin
+always @(snakeX, snakeY, game_state, direction, update, bodyX[0], bodyY[0], x_pos, y_pos, body_active, body_size, head_active, apple, collision) begin
     next_snakeX = snakeX;
     next_snakeY = snakeY;
+    next_body_active = body_active;
+    next_head_active = head_active;
     next_body_size = body_size;
     next_apple = apple;
     for (l = 0; l < 8; l = l+1) begin
@@ -88,6 +95,7 @@ always @(snakeX, snakeY, game_state, direction, update, bodyX[0], bodyY[0], x_po
         next_body_size = body_size +1;
     
     end  
+    
     //next_size = size;
     if (game_state == PLAY && update) begin
             // shift values in register
@@ -115,27 +123,36 @@ always @(snakeX, snakeY, game_state, direction, update, bodyX[0], bodyY[0], x_po
     end     
     if (game_state == GAME_OVER)  begin  
         //initialise snake head
-        //next_size = 5'b00010;
         next_snakeX = X_START;
         next_snakeY = Y_START;
-        next_body_size = 8'b00000100;
+        next_body_size = 8'b00000000;
+        next_apple = 1'b0;
         for (m = 0; m < 8; m = m+1) begin
             next_bodyX[m] = 10'd700;
             next_bodyY[m] = 10'd500;   
         end   
           
     end 
-     
+    next_head_active = (x_pos >= snakeX) && (x_pos < snakeX + SIZE) && (y_pos >= snakeY) && (y_pos < snakeY + SIZE);
+    /*
+     if (x_pos == snakeX && (y_pos >= snakeY && y_pos < snakeY + SIZE)) begin
+            next_body_active = 1'b1;      
+        end else if (x_pos == snakeX + SIZE || y_pos == snakeY + SIZE) begin
+            next_body_active = 1'b0;
+        end  
+        */
+    for (n = 0; n < 8; n = n + 1) begin
+        if (x_pos == bodyX[n] + 1 && (y_pos > bodyY[n] && y_pos < bodyY[n] + SIZE - 1) && body_size >= n+1) begin
+            next_body_active = 1'b1;      
+        end else if (x_pos == bodyX[n] + SIZE - 1|| y_pos == bodyY[n] + SIZE -1) begin
+            next_body_active = 1'b0;
+        end 
+    end 
 end
 
-assign snake_head_active = (x_pos >= snakeX) && (x_pos < snakeX + SIZE) && (y_pos >= snakeY) && (y_pos < snakeY + SIZE);
-//assign snake_head_active = (x_pos >= snakeX) && (x_pos < snakeX + SIZE) && (y_pos >= snakeY) && (y_pos < snakeY + SIZE);
+assign snake_head_active = head_active;
+assign snake_body_active = body_active;
 
-
-//temporary
-assign snake_body_active = (x_pos >= bodyX[0]) && (x_pos < bodyX[0] + SIZE) && (y_pos >= bodyY[0]) && (y_pos < bodyY[0] + SIZE) ||
-(x_pos >= bodyX[1]) && (x_pos < bodyX[1] + SIZE) && (y_pos >= bodyY[1]) && (y_pos < bodyY[1] + SIZE) ||
-(x_pos >= bodyX[2]) && (x_pos < bodyX[2] + SIZE) && (y_pos >= bodyY[2]) && (y_pos < bodyY[2] + SIZE);
 
 
 //temporary
