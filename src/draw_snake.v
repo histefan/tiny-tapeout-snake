@@ -32,24 +32,24 @@ localparam GAME_OVER = 2'b11;
 
 integer i,j,k,l,m;
 reg [BIT-1:0] snakeX, next_snakeX, snakeY, next_snakeY; 
-reg [BIT-1:0] bodyX [0:31];
-reg [BIT-1:0] bodyY [0:31];
-reg [BIT-1:0] next_bodyX [0:31];
-reg [BIT-1:0] next_bodyY [0:31];  //, next_bodyX1, next_bodyX2;
+reg [BIT-1:0] bodyX [0:7];
+reg [BIT-1:0] bodyY [0:7];
+reg [BIT-1:0] next_bodyX [0:7];
+reg [BIT-1:0] next_bodyY [0:7];  //, next_bodyX1, next_bodyX2;
 
 always @(posedge clk) begin
     if (reset) begin
         //size <= 5'b00001;
         snakeX <= X_START;
         snakeY <= Y_START;
-         for (i = 0; i < 32; i = i+1) begin
+         for (i = 0; i < 8; i = i+1) begin
             bodyX[i] <= 10'd700;
             bodyY[i] <= 10'd500;   
         end        
     end else begin
         snakeX <= next_snakeX;
         snakeY <= next_snakeY;
-        for (k = 0; k < 32; k = k+1) begin
+        for (k = 0; k < 8; k = k+1) begin
             bodyX[k] <= next_bodyX[k];
             bodyY[k] <= next_bodyY[k];   
         end
@@ -60,7 +60,7 @@ end
 always @(snakeX, snakeY, game_state, direction, update, bodyX[0], bodyY[0]) begin
     next_snakeX = snakeX;
     next_snakeY = snakeY;
-    for (l = 0; l < 32; l = l+1) begin
+    for (l = 0; l < 8; l = l+1) begin
             next_bodyX[l] = bodyX[l];
             next_bodyY[l] = bodyY[l];   
     end
@@ -82,7 +82,7 @@ always @(snakeX, snakeY, game_state, direction, update, bodyX[0], bodyY[0]) begi
                     next_snakeX = snakeX;
                   end
         endcase 
-        for (j = 1; j < 32; j = j+1) begin
+        for (j = 1; j < 8; j = j+1) begin
             next_bodyX[j] = bodyX[j-1];
             next_bodyY[j] = bodyY[j-1];   
         end
@@ -95,7 +95,7 @@ always @(snakeX, snakeY, game_state, direction, update, bodyX[0], bodyY[0]) begi
         //next_size = 5'b00010;
         next_snakeX = X_START;
         next_snakeY = Y_START;
-        for (m = 0; m < 32; m = m+1) begin
+        for (m = 0; m < 8; m = m+1) begin
             next_bodyX[m] = 10'd700;
             next_bodyY[m] = 10'd500;   
         end   
@@ -112,7 +112,10 @@ assign snake_body_active = (x_pos >= bodyX[0]) && (x_pos < bodyX[0] + SIZE) && (
 (x_pos >= bodyX[1]) && (x_pos < bodyX[1] + SIZE) && (y_pos >= bodyY[1]) && (y_pos < bodyY[1] + SIZE) ||
 (x_pos >= bodyX[2]) && (x_pos < bodyX[2] + SIZE) && (y_pos >= bodyY[2]) && (y_pos < bodyY[2] + SIZE) ||
 (x_pos >= bodyX[3]) && (x_pos < bodyX[3] + SIZE) && (y_pos >= bodyY[3]) && (y_pos < bodyY[3] + SIZE) ||
-(x_pos >= bodyX[4]) && (x_pos < bodyX[4] + SIZE) && (y_pos >= bodyY[4]) && (y_pos < bodyY[4] + SIZE);
+(x_pos >= bodyX[4]) && (x_pos < bodyX[4] + SIZE) && (y_pos >= bodyY[4]) && (y_pos < bodyY[4] + SIZE) ||
+(x_pos >= bodyX[5]) && (x_pos < bodyX[5] + SIZE) && (y_pos >= bodyY[5]) && (y_pos < bodyY[5] + SIZE) ||
+(x_pos >= bodyX[6]) && (x_pos < bodyX[6] + SIZE) && (y_pos >= bodyY[6]) && (y_pos < bodyY[6] + SIZE) ||
+(x_pos >= bodyX[7]) && (x_pos < bodyX[7] + SIZE) && (y_pos >= bodyY[7]) && (y_pos < bodyY[7] + SIZE);
 
 
 assign rgb = snake_rgb;
