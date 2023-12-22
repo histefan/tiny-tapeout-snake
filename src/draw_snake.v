@@ -3,7 +3,7 @@ module draw_snake #(
     parameter BIT = 10,
     parameter X_START = 320, // start position of snake
     parameter Y_START = 240,
-    parameter MAX_BODY_ELEMENTS = 16
+    parameter MAX_BODY_ELEMENTS = 12
 ) (
     input wire clk,
     input wire reset,
