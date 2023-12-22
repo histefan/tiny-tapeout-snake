@@ -2,7 +2,8 @@ module draw_snake #(
     parameter SIZE = 10,
     parameter BIT = 10,
     parameter X_START = 320, // start position of snake
-    parameter Y_START = 240
+    parameter Y_START = 240,
+    parameter MAX_BODY_ELEMENTS = 16
 ) (
     input wire clk,
     input wire reset,
@@ -35,10 +36,10 @@ localparam GAME_OVER = 2'b11;
 
 integer i,j,k,l,m,n;
 reg [BIT-1:0] snakeX, next_snakeX, snakeY, next_snakeY; 
-reg [BIT-1:0] bodyX [0:7];
-reg [BIT-1:0] bodyY [0:7];
-reg [BIT-1:0] next_bodyX [0:7];
-reg [BIT-1:0] next_bodyY [0:7];  
+reg [BIT-1:0] bodyX [0:MAX_BODY_ELEMENTS-1];
+reg [BIT-1:0] bodyY [0:MAX_BODY_ELEMENTS-1];
+reg [BIT-1:0] next_bodyX [0:MAX_BODY_ELEMENTS-1];
+reg [BIT-1:0] next_bodyY [0:MAX_BODY_ELEMENTS-1];  
 reg body_active, next_body_active;
 reg [7:0] body_size, next_body_size;
 reg head_active, next_head_active;
@@ -48,7 +49,7 @@ always @(posedge clk) begin
     if (reset) begin
         snakeX <= X_START;
         snakeY <= Y_START;
-        for (i = 0; i < 8; i = i+1) begin
+        for (i = 0; i < MAX_BODY_ELEMENTS; i = i+1) begin
             bodyX[i] <= 10'd700;
             bodyY[i] <= 10'd500;   
         end    
@@ -59,7 +60,7 @@ always @(posedge clk) begin
     end else begin
         snakeX <= next_snakeX;
         snakeY <= next_snakeY;
-        for (k = 0; k < 8; k = k+1) begin
+        for (k = 0; k < MAX_BODY_ELEMENTS; k = k+1) begin
             bodyX[k] <= next_bodyX[k];
             bodyY[k] <= next_bodyY[k];   
         end
@@ -77,7 +78,7 @@ always @(snakeX, snakeY, game_state, direction, update, bodyX[0], bodyY[0], x_po
     next_head_active = head_active;
     next_body_size = body_size;
     next_apple = apple;
-    for (l = 0; l < 8; l = l+1) begin
+    for (l = 0; l < MAX_BODY_ELEMENTS; l = l+1) begin
             next_bodyX[l] = bodyX[l];
             next_bodyY[l] = bodyY[l];   
     end
@@ -107,7 +108,7 @@ always @(snakeX, snakeY, game_state, direction, update, bodyX[0], bodyY[0], x_po
                     next_snakeX = snakeX;
                   end
         endcase 
-        for (j = 1; j < 8; j = j+1) begin
+        for (j = 1; j < MAX_BODY_ELEMENTS; j = j+1) begin
             next_bodyX[j] = bodyX[j-1];
             next_bodyY[j] = bodyY[j-1];   
         end
@@ -117,7 +118,7 @@ always @(snakeX, snakeY, game_state, direction, update, bodyX[0], bodyY[0], x_po
     end     
     
     next_head_active = (x_pos >= snakeX) && (x_pos < snakeX + SIZE) && (y_pos >= snakeY) && (y_pos < snakeY + SIZE);
-    for (n = 0; n < 8; n = n + 1) begin
+    for (n = 0; n < MAX_BODY_ELEMENTS; n = n + 1) begin
         if (x_pos == bodyX[n] + 1 && (y_pos > bodyY[n] && y_pos < bodyY[n] + SIZE - 1) && body_size >= n+1) begin
             next_body_active = 1'b1;      
         end else if (x_pos == bodyX[n] + SIZE - 1|| y_pos == bodyY[n] + SIZE -1) begin
@@ -133,7 +134,7 @@ always @(snakeX, snakeY, game_state, direction, update, bodyX[0], bodyY[0], x_po
         next_apple = 1'b0;
         next_body_active = 1'b0;
         next_head_active = 1'b0;
-        for (m = 0; m < 8; m = m+1) begin
+        for (m = 0; m < MAX_BODY_ELEMENTS; m = m+1) begin
             next_bodyX[m] = 10'd700;
             next_bodyY[m] = 10'd500;   
         end   

@@ -14,8 +14,39 @@ module snake #(
     output reg v_sync_o 
 );
 
+// ### state machine ###
+localparam IDLE = 2'b00;
+localparam PLAY = 2'b01;
+localparam GAME_OVER = 2'b11;
+// collision trigger states
+localparam COLLISION = 2'b01;
+localparam APPLE_COLLECTED = 2'b10;
+
 /*##### input synchronization and btn debounce #####*/
 wire sync_up, sync_down, sync_left, sync_right, debounce_up, debounce_down, debounce_left, debounce_right;
+
+reg[1:0] state, next_state; // GAME STATE
+// collision
+wire [1:0] collision_state;
+// ### snake drawing and collision logic ###
+wire snake_head_active, snake_body_active;
+wire [2:0] rgb_snake;
+wire update_snake;
+// ### controls ###
+wire[2:0] snake_direction;
+wire apple_active;
+wire[2:0] rgb_apple;
+// ### apple position and drawing ###
+wire rand_trigger;
+reg apple_trigger, next_apple_trigger;
+wire[BIT-1:0] apple_x, apple_y;
+//### Border drawing ###
+wire border_active;
+wire[2:0] rgb_border;
+//### VGA Control Signal Creation ###
+wire h_sync, v_sync, active;
+wire [BIT-1:0] x_pos, y_pos;
+wire [2:0] rgb_select_out;
 
 synchronizer up_sync (
     .clk(clk),
@@ -73,11 +104,6 @@ btn_debounce right_debounce (
     .btn_out(debounce_right)
 );
 
-
-//### VGA Control Signal Creation ###
-wire h_sync, v_sync, active;
-wire [BIT-1:0] x_pos, y_pos;
-
 vga_sync #(
     .BIT(BIT),
     .HRES(640),
@@ -98,8 +124,6 @@ vga_sync #(
     .active(active)
 );
 
-wire [2:0] rgb_select_out;
-
 rgb_select colour_out (
     .reset(reset),
     .active(active),
@@ -113,30 +137,12 @@ rgb_select colour_out (
     .rgb_out(rgb_select_out)
 );
 
-assign rgb_out = (active) ? rgb_select_out : 3'b000;
-
-// Register syncs to align with output data.
-always @(posedge clk)
-begin
-    v_sync_o <= v_sync;
-    h_sync_o <= h_sync;
-end
-
-//### Border drawing ###
-wire border_active;
-wire[2:0] rgb_border;
-
 draw_border game_border (
     .x_pos(x_pos),
     .y_pos(y_pos),
     .border_active(border_active),
     .rgb(rgb_border)
 );
-
-// ### apple position and drawing ###
-wire rand_trigger;
-reg apple_trigger, next_apple_trigger;
-wire[BIT-1:0] apple_x, apple_y;
 
 random_position apple_pos(
     .clk(clk),
@@ -145,9 +151,6 @@ random_position apple_pos(
     .x_out(apple_x),
     .y_out(apple_y)
 );
-
-wire apple_active;
-wire[2:0] rgb_apple;
 
 draw_apple game_apple (
     .x_pos(x_pos),
@@ -158,8 +161,6 @@ draw_apple game_apple (
     .rgb(rgb_apple) 
 );
 
-// ### controls ###
-wire[2:0] snake_direction;
 
 snake_control game_control (
     .clk(clk),
@@ -173,8 +174,6 @@ snake_control game_control (
 );
 
 
-wire update_snake;
-
 snake_update_trigger snake_update_trigger (
     .clk(clk),
     .reset(reset),
@@ -182,9 +181,6 @@ snake_update_trigger snake_update_trigger (
     .y_pos(y_pos),
     .update_trigger(update_snake)
 );
-// ### snake drawing and collision logic ###
-wire snake_head_active, snake_body_active;
-wire [2:0] rgb_snake;
 
 draw_snake game_snake (
     .clk(clk),
@@ -200,9 +196,6 @@ draw_snake game_snake (
     .rgb(rgb_snake) 
 );
 
-// collision
-wire [1:0] collision_state;
-
 collision game_collision (
     .clk(clk),
     .reset(reset),
@@ -214,16 +207,14 @@ collision game_collision (
 );
 
 
-// ### state machine ###
-localparam IDLE = 2'b00;
-localparam PLAY = 2'b01;
-localparam GAME_OVER = 2'b11;
+assign rgb_out = (active) ? rgb_select_out : 3'b000;
 
-// collision trigger states
-localparam COLLISION = 2'b01;
-localparam APPLE_COLLECTED = 2'b10;
-
-reg[1:0] state, next_state; // GAME STATE
+// Register syncs to align with output data.
+always @(posedge clk)
+begin
+    v_sync_o <= v_sync;
+    h_sync_o <= h_sync;
+end
 
 always @(posedge clk) begin
     if (reset) begin

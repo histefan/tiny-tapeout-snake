@@ -13,7 +13,7 @@ parameter BORDER_LEFT = 10'd0;
 parameter BORDER_RIGHT = 10'd639;
 parameter BORDER_BOTTOM = 10'd479;
 parameter BORDER_TOP = 10'd0;
-parameter BORDER_BIT_WIDTH = $clog2(8);
+parameter BORDER_BIT_WIDTH = 4;
 parameter color = 3'b111; // white
 
 
