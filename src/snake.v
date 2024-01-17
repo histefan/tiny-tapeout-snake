@@ -1,3 +1,15 @@
+// Copyright 2024 Stefan Hirschböck
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at
+// 
+// http://www.apache.org/licenses/LICENSE−2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and
+// limitations under the License.
+
 `default_nettype none
 
 module snake #(
@@ -47,6 +59,8 @@ wire[2:0] rgb_border;
 wire h_sync, v_sync, active;
 wire [BIT-1:0] x_pos, y_pos;
 wire [2:0] rgb_select_out;
+
+// initialise all modules needed 
 
 synchronizer up_sync (
     .clk(clk),
@@ -226,6 +240,8 @@ always @(posedge clk) begin
     end 
 end
 
+
+// next state combinatorics
 always @(state, up, down, left, right, collision_state, apple_trigger) begin
     next_state = state;
     next_apple_trigger = apple_trigger;
@@ -235,7 +251,7 @@ always @(state, up, down, left, right, collision_state, apple_trigger) begin
     if (collision_state == COLLISION) begin
         next_state = GAME_OVER;
     end
-    if (collision_state == APPLE_COLLECTED) begin // generate new apple position
+    if (collision_state == APPLE_COLLECTED) begin // generate new apple position when collision with apple occured
         next_apple_trigger = 1'b1;
     end else begin
         next_apple_trigger = 1'b0;

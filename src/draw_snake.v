@@ -1,3 +1,17 @@
+// Copyright 2024 Stefan Hirschböck
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at
+// 
+// http://www.apache.org/licenses/LICENSE−2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and
+// limitations under the License.
+
+
+`default_nettype none
 module draw_snake #(
     parameter SIZE = 10,
     parameter BIT = 10,
@@ -72,13 +86,14 @@ always @(posedge clk) begin
 end
 
 always @(snakeX, snakeY, game_state, direction, update, bodyX[0], bodyY[0], x_pos, y_pos, body_active, body_size, head_active, apple, collision) begin
+    // default assignments
     next_snakeX = snakeX;
     next_snakeY = snakeY;
     next_body_active = body_active;
     next_head_active = head_active;
     next_body_size = body_size;
     next_apple = apple;
-    for (l = 0; l < MAX_BODY_ELEMENTS; l = l+1) begin
+    for (l = 0; l < MAX_BODY_ELEMENTS; l = l+1) begin 
             next_bodyX[l] = bodyX[l];
             next_bodyY[l] = bodyY[l];   
     end
@@ -86,7 +101,7 @@ always @(snakeX, snakeY, game_state, direction, update, bodyX[0], bodyY[0], x_po
     if (collision == APPLE_COLLECTED && apple == 1'b0) begin
         next_apple = 1'b1;
     end 
-    if (apple && collision != APPLE_COLLECTED) begin
+    if (apple && collision != APPLE_COLLECTED) begin // increase body size 
         next_body_size = body_size +1;
         next_apple = 1'b0;
     
@@ -94,6 +109,7 @@ always @(snakeX, snakeY, game_state, direction, update, bodyX[0], bodyY[0], x_po
     
     if (game_state == PLAY && update) begin
             // shift values in register
+            // update all positions
             case (direction) // direction of head
             UP: next_snakeY = (snakeY - SIZE);
             DOWN: next_snakeY = (snakeY + SIZE);
@@ -116,8 +132,9 @@ always @(snakeX, snakeY, game_state, direction, update, bodyX[0], bodyY[0], x_po
         next_bodyY[0] = snakeY;
         
     end     
-    
+    // check if head is at position
     next_head_active = (x_pos >= snakeX) && (x_pos < snakeX + SIZE) && (y_pos >= snakeY) && (y_pos < snakeY + SIZE);
+    // check position of body elements
     for (n = 0; n < MAX_BODY_ELEMENTS; n = n + 1) begin
         if (x_pos == bodyX[n] + 1 && (y_pos > bodyY[n] && y_pos < bodyY[n] + SIZE - 1) && body_size >= n+1) begin
             next_body_active = 1'b1;      
@@ -125,7 +142,7 @@ always @(snakeX, snakeY, game_state, direction, update, bodyX[0], bodyY[0], x_po
             next_body_active = 1'b0;
         end 
     end 
-    
+    // reset when gameover
     if (game_state == GAME_OVER)  begin  
         //initialise snake head
         next_snakeX = X_START;

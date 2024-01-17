@@ -1,3 +1,16 @@
+// Copyright 2024 Stefan Hirschböck
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at
+// 
+// http://www.apache.org/licenses/LICENSE−2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and
+// limitations under the License.
+
+// module that allows snake to be updated with a frequency of less than 60 Hz allowing the snake speed to be adjusted
 module snake_update_trigger #(
     parameter BIT = 10,
     parameter V_SYNC_COUNT = 490,
@@ -31,7 +44,7 @@ always @(cnt, y_pos, x_pos, update) begin
     if (y_pos == V_SYNC_COUNT && x_pos == H_SYNC_COUNT) begin
         next_cnt = cnt + 8'b00000001;
     end
-    if (cnt == COUNTER && update == 1'b0) begin
+    if (cnt == COUNTER && update == 1'b0) begin // update trigger only for 1 clk cycle
         next_update = 1'b1;
         next_cnt = 8'b00000000;
     end else begin

@@ -1,3 +1,15 @@
+// Copyright 2024 Stefan Hirschböck
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at
+// 
+// http://www.apache.org/licenses/LICENSE−2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and
+// limitations under the License.
+
 `default_nettype none
 
 //simple debouncer for push buttons
@@ -29,9 +41,9 @@ end
 always @(counter, btn, btn_in) begin: combinatorics
     next_counter = counter;
     next_btn = btn;
-    if (btn_in) begin
+    if (btn_in) begin 
         next_counter = counter + 1'b1;
-        if (counter == COUNTER_VAL) begin
+        if (counter == COUNTER_VAL) begin // output is only 1 when input is held at 1 for counter to reach COUNTER_VAL without having been reset
             next_btn = 1'b1;
         end
     end else begin
